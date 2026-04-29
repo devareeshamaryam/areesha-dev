@@ -2,8 +2,8 @@
 import Link from "next/link";
 import { getAllBlogs } from "@/lib/blogs";
 
-export default function BlogsPage() {
-  const blogs = getAllBlogs();
+export default async function BlogsPage() {
+  const blogs = await getAllBlogs();
 
   return (
     <main className="bg-white min-h-screen py-20 px-6 md:px-16 lg:px-24">
@@ -27,7 +27,6 @@ export default function BlogsPage() {
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {blogs.map((blog) => (
-            // ✅ Link to /blogs/[slug]
             <Link
               key={blog.id}
               href={`/blogs/${blog.slug}`}
@@ -39,6 +38,7 @@ export default function BlogsPage() {
                   src={blog.image}
                   alt={blog.title}
                   fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-rose-900/0 group-hover:bg-rose-900/10 transition-all duration-300" />
