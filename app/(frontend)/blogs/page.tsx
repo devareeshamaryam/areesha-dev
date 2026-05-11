@@ -1,9 +1,23 @@
- import Image from "next/image";
-import Link from "next/link";
 import { getAllBlogs } from "@/lib/blogs";
+import Image from "next/image";
+import Link from "next/link";
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function BlogsPage() {
-  const blogs = await getAllBlogs();
+  try {
+    const blogsData = await getAllBlogs();
+    
+    const blogs = blogsData.map((post) => ({
+      id: post.id,
+      slug: post.slug,
+      title: post.title,
+      date: post.date,
+      views: post.views,
+      likes: post.likes,
+      image: post.image,
+    }));
 
   return (
     <main className="bg-white min-h-screen py-20 px-6 md:px-16 lg:px-24">
@@ -30,7 +44,7 @@ export default async function BlogsPage() {
             <Link
               key={blog.id}
               href={`/blogs/${blog.slug}`}
-              className="group cursor-pointer rounded-2xl overflow-hidden border border-rose-100 bg-white shadow-sm hover:shadow-lg hover:shadow-rose-100/60 transition-all duration-300"
+              className="group cursor-pointer rounded-2xl overflow-hidden border border-rose-100 bg-white shadow-sm hover:shadow-lg hover:shadow-rose-100/60 transition-all duration-300 block"
             >
               {/* Image */}
               <div className="relative w-full h-44 overflow-hidden">
@@ -38,7 +52,6 @@ export default async function BlogsPage() {
                   src={blog.image}
                   alt={blog.title}
                   fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-rose-900/0 group-hover:bg-rose-900/10 transition-all duration-300" />
@@ -64,14 +77,14 @@ export default async function BlogsPage() {
                   <div className="flex items-center gap-3">
                     <span className="flex items-center gap-1 text-xs text-gray-400" style={{ fontFamily: "'Lora', serif" }}>
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                        <circle cx="12" cy="12" r="3" />
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
                       </svg>
                       {blog.views}
                     </span>
                     <span className="flex items-center gap-1 text-xs text-gray-400" style={{ fontFamily: "'Lora', serif" }}>
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                       </svg>
                       {blog.likes}
                     </span>
@@ -84,4 +97,21 @@ export default async function BlogsPage() {
       </div>
     </main>
   );
+  } catch (error) {
+    console.error("Error loading blogs:", error);
+    return (
+      <main className="bg-white min-h-screen py-20 px-6 md:px-16 lg:px-24">
+        <div className="max-w-7xl mx-auto text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">No Blogs Found</h1>
+          <p className="text-gray-600 mb-8">Please add blogs from the dashboard.</p>
+          <Link
+            href="/dashboard"
+            className="inline-block bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+          >
+            Go to Dashboard
+          </Link>
+        </div>
+      </main>
+    );
+  }
 }

@@ -1,4 +1,4 @@
-"use client";
+ "use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -10,6 +10,7 @@ interface BlogDetailProps {
     category: string;
     date: string;
     readTime: string;
+    excerpt: string;        // ← added
     views: number;
     likes: number;
     coverImage: string;
@@ -19,6 +20,7 @@ interface BlogDetailProps {
       role: string;
     };
     content: BlogSection[];
+    contentHtml?: string;
     tags: string[];
   };
   relatedBlogs: RelatedBlog[];
@@ -27,7 +29,7 @@ interface BlogDetailProps {
 interface BlogSection {
   type: "paragraph" | "heading" | "subheading" | "code" | "quote" | "list";
   content: string;
-  items?: string[]; // for list type
+  items?: string[];
 }
 
 interface RelatedBlog {
@@ -38,79 +40,26 @@ interface RelatedBlog {
   views: number;
 }
 
-// ─── Mock Data (replace with your actual data fetching) ──────────────────────
+// ─── Mock Data ────────────────────────────────────────────────────────────────
 const MOCK_BLOG: BlogDetailProps["blog"] = {
   title: "Mastering Tailwind CSS for Modern UI Design",
   category: "CSS / Design",
   date: "Feb 18, 2025",
   readTime: "8 min read",
+  excerpt: "A deep dive into utility-first CSS and how Tailwind changed modern frontend development.",
   views: 2900,
   likes: 43,
-  coverImage: "/blog-cover.png", // replace with actual image
+  coverImage: "/blog-cover.png",
   author: {
     name: "Aleecia Mariam",
-    avatar: "/avatar.png", // replace with actual image
+    avatar: "/avatar.png",
     role: "Frontend Developer",
   },
   content: [
     {
       type: "paragraph",
       content:
-        "Tailwind CSS has fundamentally changed how developers approach styling in modern web applications. Instead of writing custom CSS for every component, Tailwind provides utility-first classes that let you build complex designs directly in your markup.",
-    },
-    {
-      type: "heading",
-      content: "Why Utility-First?",
-    },
-    {
-      type: "paragraph",
-      content:
-        "The utility-first methodology might feel unusual at first, but it solves several long-standing problems in CSS development — naming conflicts, specificity wars, and stylesheet bloat.",
-    },
-    {
-      type: "subheading",
-      content: "Benefits Over Traditional CSS",
-    },
-    {
-      type: "list",
-      content: "",
-      items: [
-        "No more naming things — classes are descriptive by nature",
-        "Styles stay co-located with your markup",
-        "Built-in design system via spacing, color, and typography scales",
-        "Excellent performance with PurgeCSS in production",
-      ],
-    },
-    {
-      type: "quote",
-      content:
-        "The best design systems are the ones that make the right thing easy and the wrong thing hard.",
-    },
-    {
-      type: "subheading",
-      content: "Responsive Design Made Simple",
-    },
-    {
-      type: "paragraph",
-      content:
-        "With Tailwind's responsive prefixes like sm:, md:, lg:, and xl:, building responsive layouts becomes intuitive. You no longer need to jump between media query blocks — the breakpoint logic lives right where you write your component.",
-    },
-    {
-      type: "code",
-      content: `<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  {blogs.map((blog) => (
-    <BlogCard key={blog.id} {...blog} />
-  ))}
-</div>`,
-    },
-    {
-      type: "heading",
-      content: "Advanced Techniques",
-    },
-    {
-      type: "paragraph",
-      content:
-        "Once you're comfortable with basics, Tailwind's real power unlocks through custom themes in tailwind.config.ts, arbitrary values using bracket notation, and composing reusable components with @apply in your global CSS.",
+        "Tailwind CSS has fundamentally changed how developers approach styling in modern web applications.",
     },
   ],
   tags: ["Tailwind CSS", "UI Design", "Frontend", "Next.js", "TypeScript"],
@@ -217,7 +166,6 @@ const renderSection = (section: BlogSection, index: number) => {
     case "code":
       return (
         <div key={index} className="my-7 rounded-2xl overflow-hidden shadow-sm border border-rose-100">
-          {/* Code header bar */}
           <div className="bg-rose-100 px-4 py-2 flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-rose-300" />
             <span className="w-3 h-3 rounded-full bg-rose-200" />
@@ -274,7 +222,7 @@ export default function BlogDetailPage({
           <span className="text-rose-400">.</span>
         </h1>
 
-        {/* Divider with dot (matching your portfolio style) */}
+        {/* Divider */}
         <div className="flex items-center gap-2 mb-8">
           <div className="h-px w-20 bg-rose-200" />
           <div className="w-2 h-2 rounded-full bg-rose-400" />
@@ -283,11 +231,9 @@ export default function BlogDetailPage({
 
         {/* Meta row */}
         <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-
           {/* Author */}
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-rose-100 border-2 border-rose-200 overflow-hidden flex-shrink-0">
-              {/* Replace with actual Image component if you have src */}
               <div className="w-full h-full flex items-center justify-center text-rose-400 font-bold text-sm">
                 {resolvedBlog.author.name.charAt(0)}
               </div>
@@ -322,30 +268,45 @@ export default function BlogDetailPage({
       {/* ── Cover Image ── */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-12">
         <div className="relative w-full aspect-[16/7] rounded-3xl overflow-hidden bg-rose-100 shadow-sm border border-rose-100">
-          {/* Decorative gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-rose-200/40 via-rose-100/20 to-white/10 z-10" />
-          {/* Replace the div below with <Image> when you have real images */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="grid grid-cols-3 gap-3 opacity-30 scale-110">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="w-28 h-20 rounded-lg bg-rose-300 rotate-3" />
-              ))}
+          {resolvedBlog.coverImage ? (
+            <Image
+              src={resolvedBlog.coverImage}
+              alt={resolvedBlog.title}
+              fill
+              className="object-cover"
+              priority
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center bg-rose-50">
+              <span className="text-rose-300 text-sm">No image</span>
             </div>
-          </div>
-          <div className="absolute bottom-4 left-4 z-20">
-            <div className="w-8 h-8 rounded-lg bg-rose-300/80 backdrop-blur-sm flex items-center justify-center">
-              <span className="text-white text-xs font-bold">FC</span>
-            </div>
-          </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent z-10" />
         </div>
       </div>
 
       {/* ── Article Content ── */}
       <article className="max-w-3xl mx-auto px-4 sm:px-6 pb-16">
-        {resolvedBlog.content.map((section, i) => renderSection(section, i))}
+        {resolvedBlog.contentHtml ? (
+          <div
+            className="prose prose-lg max-w-none"
+            dangerouslySetInnerHTML={{ __html: resolvedBlog.contentHtml }}
+          />
+        ) : (
+          resolvedBlog.content.map((section, i) => renderSection(section, i))
+        )}
+
+        {/* ── Excerpt / Description ── shown before tags */}
+        {resolvedBlog.excerpt && (
+          <div className="mt-10 p-5 rounded-2xl bg-rose-50 border border-rose-100">
+            <p className="text-gray-600 text-base leading-relaxed italic">
+              {resolvedBlog.excerpt}
+            </p>
+          </div>
+        )}
 
         {/* ── Tags ── */}
-        <div className="mt-12 pt-8 border-t border-rose-100">
+        <div className="mt-8 pt-8 border-t border-rose-100">
           <p className="text-xs font-semibold tracking-widest uppercase text-gray-400 mb-4">
             Tagged In
           </p>
@@ -355,7 +316,8 @@ export default function BlogDetailPage({
                 key={tag}
                 className="text-sm text-rose-500 bg-rose-50 border border-rose-200 hover:bg-rose-100 transition-colors duration-150 cursor-pointer px-4 py-1.5 rounded-full font-medium"
               >
-                #{tag}
+                {/* ← Fix: remove leading # from tag if already present */}
+                #{tag.replace(/^#+/, '')}
               </span>
             ))}
           </div>
@@ -410,19 +372,19 @@ export default function BlogDetailPage({
               >
                 {/* Card image */}
                 <div className="relative aspect-[16/9] bg-rose-100 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-rose-200/50 to-rose-100/30 group-hover:scale-105 transition-transform duration-500" />
-                  <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                    <div className="grid grid-cols-2 gap-2">
-                      {[...Array(4)].map((_, i) => (
-                        <div key={i} className="w-16 h-12 rounded bg-rose-300 rotate-3" />
-                      ))}
+                  {related.coverImage ? (
+                    <Image
+                      src={related.coverImage}
+                      alt={related.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center bg-rose-50">
+                      <span className="text-rose-300 text-xs">No image</span>
                     </div>
-                  </div>
-                  <div className="absolute bottom-3 left-3">
-                    <div className="w-7 h-7 rounded-lg bg-rose-300/80 backdrop-blur-sm flex items-center justify-center">
-                      <span className="text-white text-[10px] font-bold">FC</span>
-                    </div>
-                  </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent z-10" />
                 </div>
 
                 {/* Card body */}
