@@ -1,4 +1,5 @@
- import Header from "@/components/Header";
+ import CursorGlow from "@/components/Cursorglow";
+import Header from "@/components/Header";
 
 export default function FrontendLayout({
   children,
@@ -7,6 +8,7 @@ export default function FrontendLayout({
 }) {
   return (
     <>
+    <CursorGlow />
       <Header />
       {children}
     </>

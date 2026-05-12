@@ -1,8 +1,21 @@
-"use client";
+ "use client";
 
 import { useEffect, useRef, useState } from "react";
 
-function FadeText({ children, delay = 0, className = "" }) {
+// ✅ Types add kiye
+interface FadeTextProps {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}
+
+interface StatCardProps {
+  number: string;
+  label: string;
+  delay: number;
+}
+
+function FadeText({ children, delay = 0, className = "" }: FadeTextProps) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
 
@@ -36,7 +49,7 @@ function FadeText({ children, delay = 0, className = "" }) {
   );
 }
 
-function StatCard({ number, label, delay }) {
+function StatCard({ number, label, delay }: StatCardProps) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
 
@@ -99,8 +112,6 @@ export default function AboutMe() {
             <div className="h-px w-6 bg-rose-100" />
           </div>
         </FadeText>
-
-
 
         {/* Paragraphs */}
         <div className="space-y-8">

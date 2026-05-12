@@ -3,7 +3,22 @@
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 
-const projects = [
+// ✅ Types add kiye
+interface Project {
+  id: number;
+  title: string;
+  description: string;
+  tags: string[];
+  github: string;
+  image: string;
+}
+
+interface ProjectCardProps {
+  project: Project;
+  index: number;
+}
+
+const projects: Project[] = [
   {
     id: 1,
     title: "Tax App",
@@ -54,7 +69,7 @@ const projects = [
   },
 ];
 
-function ProjectCard({ project, index }) {
+function ProjectCard({ project, index }: ProjectCardProps) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
 
@@ -167,9 +182,6 @@ function ProjectCard({ project, index }) {
 export default function ProjectsSection() {
   return (
     <section className="bg-white py-20 px-6 md:px-16 lg:px-24">
-      {/* Google Fonts — add to layout.tsx instead */}
-      {/* <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Lora&display=swap" rel="stylesheet" /> */}
-
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
         <div className="mb-14 text-center">

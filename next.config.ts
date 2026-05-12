@@ -2,6 +2,7 @@
 
 const nextConfig: NextConfig = {
   images: {
+    unoptimized: true, // ✅ base64 images ke liye
     remotePatterns: [
       {
         protocol: "https",
